@@ -32,3 +32,37 @@ kubectl -n argo port-forward deployment/argo-server 2746:2746
 kubectl create -f hello-world.yaml
 
 minikube start --driver=docker
+
+kubectl create serviceaccount argo-workflow -n argo
+
+
+cat <<EOF | kubectl apply -f - >/dev/null
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: workflow-executor-rbac
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtaskresults
+    verbs:
+      - create
+      - patch
+EOF
+
+
+cat <<EOF | kubectl apply -f - >/dev/null
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argo-executor-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: workflow-executor-rbac
+subjects:
+- kind: ServiceAccount
+  name: argo-workflow
+  namespace: argo
+EOF

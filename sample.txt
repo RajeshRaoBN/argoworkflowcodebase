@@ -1,0 +1,18 @@
+gcloud functions deploy memories-thumbnail-creator \
+  --region=us-east1 \
+  --runtime=nodejs22 \
+  --entry-point=memories-thumbnail-creator \
+  --trigger-bucket=qwiklabs-gcp-01-405ca604cd8d-bucket \
+  --source=.
+
+
+
+
+PROJECT_ID=qwiklabs-gcp-01-405ca604cd8d
+
+PROJECT_NUMBER=644596691794
+SERVICE_ACCOUNT=service-644596691794@gs-project-accounts.iam.gserviceaccount.com
+
+gcloud projects add-iam-policy-binding qwiklabs-gcp-01-405ca604cd8d \
+  --member serviceAccount:service-644596691794@gs-project-accounts.iam.gserviceaccount.com \
+  --role roles/pubsub.publisher
